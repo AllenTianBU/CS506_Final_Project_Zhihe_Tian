@@ -44,7 +44,6 @@ def load_and_clean():
                                COL_HOBBIES, COL_SPOUSE_EDUC, COL_INC_OPINION,
                                COL_JOB, COL_CLASS])
     df = df.apply(pd.to_numeric, errors='coerce')
-
     df = df[df[COL_HAPPY].isin([1, 2, 3])]
     df = df[df[COL_HEALTH].isin([1, 2, 3, 4])]
     df = df[df[COL_RELIG].isin(ATTEND_MAP.keys())]
@@ -53,7 +52,6 @@ def load_and_clean():
     df = df[df[COL_MARITAL].isin([1, 2, 3, 4, 5])]
     df = df[df[COL_EDUC].between(0, 20)]
     df = df[df[COL_INCOME].between(1, 12)]
-
     df[COL_EXCITE] = df[COL_EXCITE].where(df[COL_EXCITE].isin([1, 2, 3]))
     df[COL_FAMILY] = df[COL_FAMILY].where(df[COL_FAMILY].between(1, 7))
     df[COL_FRIEND] = df[COL_FRIEND].where(df[COL_FRIEND].between(1, 7))
@@ -84,9 +82,7 @@ def load_and_clean():
     df['income_opinion'] = (6 - df[COL_INC_OPINION]).fillna((6 - df[COL_INC_OPINION]).median())
     df['job_sat']        = (5 - df[COL_JOB]).fillna((5 - df[COL_JOB]).median())
     df['class_id']       = df[COL_CLASS].fillna(df[COL_CLASS].median())
-
     return df[['happiness'] + FEATURES]
-
 
 def train(df):
     X = df[FEATURES]

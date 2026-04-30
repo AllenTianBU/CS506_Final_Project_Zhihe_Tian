@@ -33,10 +33,10 @@ The GSS has surveyed thousands of Americans since 1972 about their happiness, ma
 
 This study has been running for 50 years, interviewing over 60,000 applicants, and covers hundreds of areas (see GSS_Codebook_index.pdf for details) that effects a persons' happinese. I downloaded this data as a csv file from Kaggle. 
 
-
 I will also be asking people around me at BU similar questions to the online surveys. This will give me a set of data to validate my linear regression model with, on top of reserving 15% of my online data as my validation set.
 
 ### Data cleaning
+
 The raw GSS CSV has 11,610 columns, of which many are empty, since the survey added more questions (and removed questions) over time.
 We want clean data on factors that we actually care about. It would take way too long to train on this entire data set and to identify which features we want to focus on, so the first step was to identify which factors had the highest correlation with happinese, which participants scored from "not very happy ", "pretty happy", and "very happy."
 
@@ -69,6 +69,31 @@ We reversed some of the negative values so that higher value always represent hi
 ## Results/Visualization
 ![training_box_plot.png](training_box_plot.png)
 
+The results are as following:
+- RMSE: 0.5614
+- Coefficients (weights):
+  - health: 0.1356
+  - religion: 0.0255
+  - trust: 0.0613
+  - finsat: 0.1853
+  - is_married: -0.5753
+  - educ: -0.0049
+  - income: -0.0054
+  - exciting: 0.2083
+  - family_life: 0.0460
+  - friendships: 0.0335
+  - marr_happy: 0.3929
+  - health_phys: -0.0211
+  - city_life: 0.0310
+  - hobbies: 0.0233
+  - spouse_educ: -0.0075
+  - income_opinion: -0.0212
+  - job_sat: 0.1152
+  - class_id: 0.0606
+  - intercept: -1.1267
+
+Here is the weights plotted in order of magnitiude. 
+![coefficients.png](coefficients.png)
 ### Additional validation by surveying people around me
 In addition to the 20% held out for training from GSS, I decided to interview people around me (BU students) to see if my model perform well in the real world.
 The following chart is the response I got by answering the same questions as the survey from 5 individuals. The first 2 individuals were asked a shorter version of the survey, because that was before I added more feature to the model. The other 3 participants were asked the full questionaire, thus we can evaluate our model's performance.
