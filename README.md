@@ -2,7 +2,7 @@
 By: Zhihe Tian 
 ## How to Build and Run the Code
 ### 1. Download the Data
-The GSS dataset is too large to store in this repository (1.9GB before cleaning). So please download it using the link below! 
+The GSS dataset is too large to store in this repository (1.9GB). So please download it using the link below! 
 1. https://www.kaggle.com/datasets/norc/general-social-survey?resource=download
 2. Download the CSV and move the file to: `GSS_Data_CSV_CodeBook/gss.csv`
 
@@ -28,14 +28,13 @@ TLDR: My goal is to predict how happy and content a person feels toward their li
 ## Methods
 ### Data collection and process
 The source I chose to train and validate my data on is the General Social Survey (GSS) by the University of Chicago.
-Shown in code
-The GSS has surveyed thousands of Americans since 1972 about their happiness, marital status, income, religious practice, job satisfaction, etc.
+Shown in code the GSS has surveyed thousands of Americans since 1972 about their happiness, marital status, income, religious practice, job satisfaction, etc.
 
 This study has been running for 50 years, interviewing over 60,000 applicants, and covers hundreds of areas (see GSS_Codebook_index.pdf for details) that effects a persons' happinese. I downloaded this data as a csv file from Kaggle. 
 
-I will also be asking people around me at BU similar questions to the online surveys. This will give me a set of data to validate my linear regression model with, on top of reserving 15% of my online data as my validation set.
+I will also be asking people around me at BU similar questions to the online surveys. This will give me a set of data to validate my linear regression model with, on top of reserving 20% of my online data as my validation set.
 
-Here is the process simplified 
+Here is the data reading process simplified taking only columns we want (or else we won't have enough ram)
 ```bash
  df = pd.read_csv('gss.csv', usecols=[col_happy, col_health, col_relig,  ...])
  df = df.apply(pd.to_numeric,errors='coerce')
@@ -45,14 +44,14 @@ Here is the process simplified
 The raw GSS CSV has 11,610 columns, of which many are empty, since the survey added more questions (and removed questions) over time.
 We want clean data on factors that we actually care about. It would take way too long to train on this entire data set and to identify which features we want to focus on, so the first step was to identify which factors had the highest correlation with happinese, which participants scored from "not very happy ", "pretty happy", and "very happy."
 
-To do this, we looped through each column and identified the strongest correlation using pearson correalation (identified by running gss_pearson_simpel.py) and got the following.
+To do this, we looped through each column and identified the strongest correlation using pearson correlation (identified by running gss_pearson_simpel.py) and got the following.
 ![top_correlator.png](top_correlator.png)
 
 This only shows the top 10 features by magnitude, but we can already tell which features we want to focus on like marriage status, religous practice, etc.
 
 After identifying the features we want to keep, we proceed to remove the columns unrelated to our model, thus dramatically decreasing the processing time by removing unneeded columns.
 
-Now, there were missing columns since not every person were asked the same questions, so we only kept the participants (rows) that answered all the questions to avoid biases. This left us with 17,164 rows of clean data.
+Now, there were missing columns since not every person were asked the same questions, so we kept the participants (rows) that answered all the questions to avoid biases. There were also a few cases where the participants answer most questions except for a few. In this case, a median value is used as a placeholder to increase our data set while minimizing the missing value's effect on the final happinese score. This left us with 17,164 rows of clean data.
 
 Here is the process simplified, continued... 
 ```bash
@@ -66,7 +65,7 @@ Here is the process simplified, continued...
 ### Feature extraction
 After identifying the features that correlated strongest with happinese, we finalize our selection to include the following features: self-reported health, religious attendance, interpersonal trust, financial satisfaction, marital status, years of education, family income, life excitement, satisfaction with family life, friendships, marriage, physical health, city of residence, hobbies, spouse's education, relative income opinion, job satisfaction, and social class identification. 
 
-We validated that these features contribute to a person's happinese when we run our model. Our model will give us a weight for each factor. The higher the weight the more impactful this facto is to a person's happinese, thus proving the selected feature is valid.  
+We validated that these features contribute to a person's happinese when we run our model. Our model will give us a weight for each factor. The higher the weight the more impactful this factor is to a person's happinese, thus proving the selected feature is valid.  
 
 ### Model training & Evaluation
 The cleaned data set were first split into 80&20 for training and test set. We also use a random seed for robust training. 
