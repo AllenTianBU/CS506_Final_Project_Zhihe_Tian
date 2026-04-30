@@ -118,11 +118,11 @@ Here is the weights plotted in order of magnitiude.
 In addition to the 20% held out for training from GSS, I decided to interview people around me (BU students) to see if my model perform well in the real world.
 The following chart is the response I got by answering the same questions as the survey from 5 individuals. The first 2 individuals were asked a shorter version of the survey, because that was before I added more feature to the model. The other 3 participants were asked the full questionnaire, thus we can evaluate our model's performance.
 
-Here is the shorter survey results (N=2)
+Here is the shorter survey results (N = 2)
 
 ![short_survey.png](short_survey.png) 
 
-Here is the full survey results (N=3)
+Here is the full survey results (N = 3)
 
 ![full_survey.png](full_survey.png)
 
