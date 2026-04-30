@@ -35,6 +35,11 @@ This study has been running for 50 years, interviewing over 60,000 applicants, a
 
 I will also be asking people around me at BU similar questions to the online surveys. This will give me a set of data to validate my linear regression model with, on top of reserving 15% of my online data as my validation set.
 
+Here is the process simplified 
+```bash
+ df = pd.read_csv('gss.csv', usecols=[col_happy, col_health, col_relig,  ...])
+ df = df.apply(pd.to_numeric,errors='coerce')
+ ```
 ### Data cleaning
 
 The raw GSS CSV has 11,610 columns, of which many are empty, since the survey added more questions (and removed questions) over time.
@@ -42,14 +47,26 @@ We want clean data on factors that we actually care about. It would take way too
 
 To do this, we looped through each column and identified the strongest correlation using pearson correalation (identified by running gss_pearson_simpel.py) and got the following.
 ![top_correlator.png](top_correlator.png)
+
 This only shows the top 10 features by magnitude, but we can already tell which features we want to focus on like marriage status, religous practice, etc.
 
 After identifying the features we want to keep, we proceed to remove the columns unrelated to our model, thus dramatically decreasing the processing time by removing unneeded columns.
 
-Now, there were missing columns since not every participants were asked the same questions, so we only kept the participants (rows) that answered all the questions to avoid biases. This left us with 17,164 rows of clean data.
+Now, there were missing columns since not every person were asked the same questions, so we only kept the participants (rows) that answered all the questions to avoid biases. This left us with 17,164 rows of clean data.
+
+Here is the process simplified, continued... 
+```bash
+ df = df[df['GENERAL HAPPINESS'].isin([1, 2, 3])]
+ #Reverse scales, which was applied to health for example
+ df['health'] = 5 - df[col_health]
+ # For missing values, we fill it with the median so that we don't run into an error and minimize the effect on the happinese score calculation
+ df['exciting'] = (4 -df[col_excite]).fillna(median) 
+```
 
 ### Feature extraction
-After identifying the features that correlated strongest with happinese, we finalize our selection to include the following features: self-reported health, religious attendance, interpersonal trust, financial satisfaction, marital status, years of education, family income, life excitement, satisfaction with family life, friendships, marriage, physical health, city of residence, hobbies, spouse's education, relative income opinion, job satisfaction, and social class identification.
+After identifying the features that correlated strongest with happinese, we finalize our selection to include the following features: self-reported health, religious attendance, interpersonal trust, financial satisfaction, marital status, years of education, family income, life excitement, satisfaction with family life, friendships, marriage, physical health, city of residence, hobbies, spouse's education, relative income opinion, job satisfaction, and social class identification. 
+
+We validated that these features contribute to a person's happinese when we run our model. Our model will give us a weight for each factor. The higher the weight the more impactful this facto is to a person's happinese, thus proving the selected feature is valid.  
 
 ### Model training & Evaluation
 The cleaned data set were first split into 80&20 for training and test set. We also use a random seed for robust training. 
@@ -68,6 +85,10 @@ One big limitation of my study is accurately predicting happinese score for indi
 We reversed some of the negative values so that higher value always represent higher happinese. Simarily, we also changed the happinse target range from 1-3 to 0-3, with 0.5 = Not Too Happy, 1.5 =  Pretty Happy, 2.5 = Very Happy. This was done because the model had difficulty reaching the ceiling value of 3.
 ## Results/Visualization
 ![training_box_plot.png](training_box_plot.png)
+
+What we wanted to see here is a linear increase from "not very happy" to "very happy", and we do see it. There is quite a large variance for each category, but this was expected as happinese is a very subjective and hard things to quantify. 
+Another thing we wanted to see is the convergence between the train RMSE (blue line) and validation RMSE (orange line). This tells us that we are not learning very well and not overfitting or underfitting.
+One more noticable thing from looking at the box graph is that "pretty happy" and "very happy" is distinguished better than "not too happy" and "pretty happy." This is interesting and can be contributed to the small number of data trained on "not too happy" individuals.
 
 The results are as following:
 - RMSE: 0.5614
@@ -104,4 +125,9 @@ Here is the full survey results (N=3)
 ![full_survey.png](full_survey.png)
 
 We enter the answers from participants 3, 4, 5 into our model after training, and here are the predicted results vs the truth.
-![full_survey.png](full_survey.png)
+![img_1.png](img_1.png)
+
+Though the number of this data set is small, we can confirm that our model 1) predicts a number between 0-3 (not very happy to very happy) 2) it predicts close to the ground truth, and in this case we got all three correct.
+
+### Conclusion
+A model using ordinary least square regression was defined to identify the weights associated with each happinese factor and predict individual's happinese based off their response.
