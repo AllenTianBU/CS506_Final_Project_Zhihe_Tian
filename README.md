@@ -1,5 +1,5 @@
 # Happiness Predictor Trained on GSS
-
+By: Zhihe Tian 
 ## How to Build and Run the Code
 ### 1. Download the Data
 The GSS dataset is too large to store in this repository (1.9GB before cleaning). So please download it using the link below! 
@@ -57,6 +57,8 @@ We chose Ordinary Least Squares (OLS) linear regression model from the scikit-le
 Both the weight and # of factors will each attribute a bit to the final happinese score, which fits for our data.
 Since our goal is to understand which factors contribute strongest to happinese, we can easily be identified by looking at the corresponding weight in the linear equation.
 
+In simple words, we can calculate the predicted happiense score from: happiness score = w_1*x_1 + w_2*x_2…. The main challenge and job of our model is to identify the correct weight for each factor.
+
 One challenge of using GSS is the fact that the dataset is skewed toward "pretty happy" responses. Initially, I had trouble separating "pretty happy" from the other reponses. To address this issue, I used sklearn's compute_class_weight('balanced) to assign better weights by accounting for the frequency of a particular factor. In short, this helepd the model weight the 3 levels of happinese more evenly.
 
 To evaluate the model, I chose R^2 and RMSE. I graphed the learning curve to visaulize and identify cases of underfitting and overfitting. In addition, a box plot of predicted scores vs actual scores was created.
@@ -66,3 +68,15 @@ One big limitation of my study is accurately predicting happinese score for indi
 We reversed some of the negative values so that higher value always represent higher happinese. Simarily, we also changed the happinse target range from 1-3 to 0-3, with 0.5 = Not Too Happy, 1.5 =  Pretty Happy, 2.5 = Very Happy. This was done because the model had difficulty reaching the ceiling value of 3.
 ## Results/Visualization
 ![training_box_plot.png](training_box_plot.png)
+
+### Additional validation by surveying people around me
+In addition to the 20% held out for training from GSS, I decided to interview people around me (BU students) to see if my model perform well in the real world.
+The following chart is the response I got by answering the same questions as the survey from 5 individuals. The first 2 individuals were asked a shorter version of the survey, because that was before I added more feature to the model. The other 3 participants were asked the full questionaire, thus we can evaluate our model's performance.
+
+Here is the shorter survey results (N=2)
+![short_survey.png](short_survey.png)
+Here is the full survey results (N=3)
+![full_survey.png](full_survey.png)
+
+We enter the answers from participants 3, 4, 5 into our model after training, and here are the predicted results vs the truth.
+![full_survey.png](full_survey.png)
