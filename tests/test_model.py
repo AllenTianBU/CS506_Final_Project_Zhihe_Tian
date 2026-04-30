@@ -5,6 +5,12 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from linear_regression_predictor import load_and_clean, score_to_label, FEATURES
 
+import pytest
+
+DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                         'GSS_Data_CSV_CodeBook', 'gss.csv')
+
+@pytest.mark.skipif(not os.path.exists(DATA_PATH), reason="gss.csv not available in CI")
 def test_load_and_clean():
     df = load_and_clean()
     assert len(df) > 0
