@@ -7,8 +7,7 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.utils.class_weight import compute_class_weight
 
 data_path = 'GSS_Data_CSV_CodeBook/gss.csv'
-
-# column names from GSS codebook
+# column names from GSS
 col_happy = 'GENERAL HAPPINESS'
 col_health = 'CONDITION OF HEALTH'
 col_relig = 'HOW OFTEN R ATTENDS RELIGIOUS SERVICES'
@@ -56,24 +55,24 @@ def load_and_clean():
     df[col_class] = df[col_class].where(df[col_class].isin([1, 2, 3, 4]))
     df[col_marryhappy] = df[col_marryhappy].where(df[col_marryhappy].isin([1, 2, 3]))
     # reverse scales so higher = better, if missing insetad of dropping it, we will fill it with median so it doesn't effect the happiense score
-    df['happiness'] = 3.5 - df[col_happy]
-    df['health'] = 5 - df[col_health]
+    df['happiness'] = 3.5-df[col_happy]
+    df['health'] = 5-df[col_health]
     df['religion'] = df[col_relig].map(attend_map)
-    df['trust'] = 4 - df[col_trust]
+    df['trust'] = 4-df[col_trust]
     df['finsat'] = 4 - df[col_finsat]
     df['is_married'] = (df[col_marital] == 1).astype(int)
     df['educ'] = df[col_educ]
     df['income'] = df[col_income]
-    df['exciting'] = (4 - df[col_excite]).fillna((4 - df[col_excite]).median())
+    df['exciting'] = (4-df[col_excite]).fillna((4-df[col_excite]).median())
     df['family_life'] = (8 - df[col_family]).fillna((8 - df[col_family]).median())
-    df['friendships'] = (8 - df[col_friend]).fillna((8 - df[col_friend]).median())
+    df['friendships'] = (8-df[col_friend]).fillna((8-df[col_friend]).median())
     df['marr_happy'] = (4 - df[col_marryhappy]).fillna(0)
-    df['health_phys'] = (8 - df[col_health_phys]).fillna((8 - df[col_health_phys]).median())
+    df['health_phys'] = (8-df[col_health_phys]).fillna((8-df[col_health_phys]).median())
     df['city_life'] = (8 - df[col_city]).fillna((8 - df[col_city]).median())
-    df['hobbies'] = (8 - df[col_hobbies]).fillna((8 - df[col_hobbies]).median())
+    df['hobbies'] = (8-df[col_hobbies]).fillna((8-df[col_hobbies]).median())
     df['spouse_educ'] = df[col_spouse_educ].fillna(0)
     df['income_opinion'] = (6 - df[col_inc_opinion]).fillna((6 - df[col_inc_opinion]).median())
-    df['job_sat'] = (5 - df[col_job]).fillna((5 - df[col_job]).median())
+    df['job_sat'] = (5-df[col_job]).fillna((5-df[col_job]).median())
     df['class_id'] = df[col_class].fillna(df[col_class].median())
     return df[['happiness'] + FEATURES]
 def train(df):
@@ -90,12 +89,10 @@ def train(df):
     model.fit(X_train, y_train, sample_weight=sample_weights)
     y_train_pred = model.predict(X_train)
     y_pred = model.predict(X_test)
-    train_r2 = r2_score(y_train, y_train_pred)
-    test_r2 = r2_score(y_test, y_pred)
     # Results
     print("model results:")
-    print(f"train r2: {train_r2:.4f}")
-    print(f"test r2:  {test_r2:.4f}")
+    print(f"train r2: {r2_score(y_train, y_train_pred):.4f}")
+    print(f"test r2:  {r2_score(y_test, y_pred):.4f}")
     print(f"mae: {mean_absolute_error(y_test, y_pred):.4f}")
     print(f"rmse: {mean_squared_error(y_test, y_pred) ** 0.5:.4f}")
     print("coefficients:")
@@ -212,25 +209,21 @@ def predict(model):
 
     print("\nhow many years of school has your spouse completed? (0 if no spouse)")
     spouse_educ = int(input("your answer: "))
-
     print("\ncompared to others, how would you describe your family income?")
     print("1 = far above average   2 = above average   3 = average")
     print("4 = below average       5 = far below average")
     income_opinion = 6 - int(input("your answer: "))
-
     print("\nhow satisfied are you with your job or housework?")
     print("1 = very satisfied   2 = moderately satisfied")
     print("3 = a little dissatisfied   4 = very dissatisfied")
     job_sat = 5 - int(input("your answer: "))
-
     print("\nwhich social class do you identify with?")
     print("1 = lower class   2 = working class   3 = middle class   4 = upper class")
     class_id = int(input("your answer: "))
 
-    X_input = pd.DataFrame([[health, religion, trust, finsat, is_married, educ, income, exciting, family_life, friendships, marr_happy, health_phys, city_life, hobbies, spouse_educ, income_opinion, job_sat, class_id]], columns=FEATURES)
-    score = model.predict(X_input)[0]
-    score_clamped = np.clip(score, 0, 3)
-    label = score_to_label(score_clamped)
+    x = pd.DataFrame([[health, religion, trust, finsat, is_married, educ, income, exciting, family_life, friendships, marr_happy, health_phys, city_life, hobbies, spouse_educ, income_opinion, job_sat, class_id]], columns=FEATURES)
+    s = np.clip(model.predict(x)[0], 0, 3)
+    label = score_to_label(s)
     print()
     print(f"predicted happiness: {label}")
 
