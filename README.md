@@ -1,5 +1,8 @@
 # Happiness Predictor Trained on GSS
-By: Zhihe Tian 
+By: Zhihe Tian
+
+Youtube presentation link: https://youtu.be/N1-Ul6EJRs4
+
 ## How to Build and Run the Code
 ### 1. Download the Data
 The GSS dataset is too large to store in this repository (1.9GB). So please download it using the link below! 
@@ -134,3 +137,5 @@ Though the number of this data set is small, we can confirm that our model 1) pr
 
 ### Conclusion
 A model using ordinary least square regression was defined to identify the weights associated with each happiness factor and predict individual's happiness based off their response.
+
+Youtube presentation link: https://youtu.be/N1-Ul6EJRs4
